@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Juego del Impostor · Personajes Bíblicos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <style>
+        /* ===== VARIABLES Y RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #6b4e3a;
+            --primary-dark: #4e3a2b;
+            --primary-light: #8b6f5a;
+            --accent: #c9a84c;
+            --accent-light: #e0c070;
+            --danger: #b22222;
+            --success: #2e7d32;
+            --bg: #f5f0e8;
+            --card: #ffffff;
+            --text: #2c2418;
+            --text-light: #7a6e5e;
+            --border: #e0d6c8;
+            --radius: 18px;
+            --radius-sm: 12px;
+            --shadow: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --font: 'Poppins', -apple-system, sans-serif;
+            --font-heading: 'Montserrat', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.04);
+        }
+
+        /* ===== PANTALLAS ===== */
+        .screen {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--card);
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .logo-icon {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+
+        .logo-text h1 {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .logo-text h1 span {
+            color: var(--accent);
+        }
+
+        .tagline {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .back-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+            font-size: 1rem;
+        }
+
+        .back-button:active {
+            transform: scale(0.9);
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* ===== MAIN ===== */
+        .main-content {
+            flex: 1;
+            padding: 18px 16px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ===== WELCOME ===== */
+        .welcome-card {
+            background: linear-gradient(135deg, #6b4e3a, #4e3a2b);
+            color: #fff;
+            padding: 22px 18px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .welcome-icon {
+            font-size: 2.2rem;
+            margin-bottom: 6px;
+        }
+
+        .welcome-text {
+            font-size: 0.95rem;
+            font-weight: 400;
+            opacity: 0.95;
+        }
+
+        /* ===== SETUP CARDS ===== */
+        .setup-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .section-title h2 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        /* ===== PLAYER SELECTOR ===== */
+        .player-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+
+        .selector-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            color: var(--primary);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+
+        .selector-btn:active {
+            transform: scale(0.92);
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .player-display {
+            text-align: center;
+            min-width: 70px;
+        }
+
+        .player-count {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: var(--font-heading);
+            line-height: 1;
+        }
+
+        .player-label {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .player-slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            margin: 10px 0 4px;
+        }
+
+        .player-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 2px;
+        }
+
+        .slider-labels span {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== CATEGORÍAS ===== */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .category-card {
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            text-align: center;
+            aspect-ratio: 1;
+            justify-content: center;
+        }
+
+        .category-card:active {
+            transform: scale(0.96);
+        }
+
+        .category-card.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .category-card.selected .category-name {
+            color: #fff;
+        }
+
+        .category-card.selected .category-logo {
+            filter: brightness(0) invert(1);
+        }
+
+        .category-logo {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .category-name {
+            font-size: 0.68rem;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        /* ===== BOTONES ===== */
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+            font-family: var(--font);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(107,78,58,0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn-secondary {
+            background: var(--card);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+        .action-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        /* ===== SELECTED CATEGORY ===== */
+        .selected-category {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            margin-top: 12px;
+            border-left: 4px solid var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .selected-category i {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .selected-category-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .selected-label {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #selected-category-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* ===== WHEEL ===== */
+        .wheel-container {
+            position: relative;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto 20px;
+        }
+
+        .wheel {
+            width: 100%;
+            aspect-ratio: 1;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.17, 0.99);
+        }
+
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid #fff;
+        }
+
+        .wheel-content {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            transform-origin: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+
+        .wheel-content img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
+            margin-bottom: 3px;
+            filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+        }
+
+        .wheel-content span {
+            font-size: 0.6rem;
+            line-height: 1.1;
+            max-width: 70px;
+            word-wrap: break-word;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .pointer-triangle {
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 28px solid var(--danger);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .spin-btn {
+            padding: 15px 28px;
+            background: var(--danger);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 20px auto 0;
+            font-family: var(--font);
+            box-shadow: 0 4px 14px rgba(178,34,34,0.3);
+        }
+
+        .spin-btn:active:not(:disabled) {
+            transform: scale(0.96);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.6;
+        }
+
+        .wheel-result {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-top: 8px;
+        }
+
+        .result-icon {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .result-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .result-category {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 6px 0;
+        }
+
+        /* ===== ROLE SCREEN ===== */
+        .game-header {
+            padding: 12px 16px;
+        }
+
+        .game-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .game-info h2 {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .game-info h2 span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .game-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+
+        .progress-circle {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 3px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.68rem;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* ===== PLAYER CARD ===== */
+        .player-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 18px 14px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+
+        .player-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--bg);
+        }
+
+        .player-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: var(--shadow);
+            flex-shrink: 0;
+        }
+
+        .player-info h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .player-tag {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: var(--bg);
+            padding: 3px 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        /* ===== ELEMENT DISPLAY ===== */
+        .element-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg);
+            border-radius: var(--radius);
+            padding: 18px 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+        }
+
+        .element-image-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            background: var(--primary);
+        }
+
+        .element-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .element-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #default-icon {
+            font-size: 3.5rem;
+            color: #fff;
+            opacity: 0.8;
+        }
+
+        .element-details h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .category-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary);
+            color: #fff;
+            padding: 5px 14px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* ===== ROLE SECTION ===== */
+        .role-section {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px 14px;
+            border: 1px solid var(--border);
+        }
+
+        .role-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .role-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .role-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .impostor-warning {
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(178,34,34,0.08);
+            border-left: 4px solid var(--danger);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+
+        .impostor-warning i {
+            color: var(--danger);
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+        .impostor-warning h5 {
+            color: var(--danger);
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .impostor-warning p {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .privacy-notice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
+        .privacy-notice i {
+            color: var(--primary);
+        }
+
+        /* ===== NAV BUTTONS ===== */
+        .navigation-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: var(--font);
+            transition: 0.2s;
+        }
+
+        .nav-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .prev-btn {
+            background: var(--card);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .finish-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--success);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: var(--font);
+            box-shadow: 0 4px 14px rgba(46,125,50,0.25);
+            transition: 0.2s;
+        }
+
+        .finish-btn:active:not(:disabled) {
+            transform: scale(0.97);
+        }
+
+        .finish-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ===== INTERMEDIATE ===== */
+        .intermediate-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 16px;
+            flex: 1;
+        }
+
+        .mystery-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 30px 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .mystery-animation {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .mystery-circle {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            color: #fff;
+            font-weight: 900;
+            animation: float 3s infinite ease-in-out;
+            box-shadow: 0 8px 30px rgba(107,78,58,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
+        }
+
+        .mystery-message h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .mystery-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .mystery-subtext {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .reveal-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            border: none;
+            border-radius: var(--radius-sm);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 6px 20px rgba(107,78,58,0.3);
+            transition: 0.2s;
+            font-family: var(--font);
+        }
+
+        .reveal-btn:active {
+            transform: scale(0.97);
+        }
+
+        .reveal-icon {
+            font-size: 1.4rem;
+        }
+
+        .reveal-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .reveal-title {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .reveal-subtitle {
+            font-size: 0.75rem;
+            opacity: 0.85;
+        }
+
+        .secret-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-top: 18px;
+            border: 1px solid var(--border);
+        }
+
+        .secret-notice i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .secret-notice p {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        /* ===== GAME START ===== */
+        .game-start-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            flex: 1;
+        }
+
+        .start-game-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 28px 18px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .start-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 18px;
+            position: relative;
+        }
+
+        .icon-circle {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--success), #4caf50);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #fff;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 8px 30px rgba(46,125,50,0.3);
+        }
+
+        .start-message h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .start-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .game-instructions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .instruction {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .instruction-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+
+        .instruction p {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .game-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ===== END SCREEN ===== */
+        .end-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            flex: 1;
+        }
+
+        .summary-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 24px 16px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .summary-header i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .summary-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .summary-item {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 12px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .summary-item.impostor-reveal {
+            grid-column: 1 / -1;
+            background: rgba(178,34,34,0.06);
+            border: 2px solid var(--danger);
+            position: relative;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .impostor-reveal .item-icon {
+            background: var(--danger);
+        }
+
+        .item-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .item-label {
+            font-size: 0.65rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .item-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .impostor-name {
+            color: var(--danger);
+        }
+
+        .impostor-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transform: rotate(12deg);
+            box-shadow: 0 2px 8px rgba(178,34,34,0.3);
+        }
+
+        .final-message {
+            text-align: center;
+            margin-bottom: 18px;
+            padding: 12px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+        }
+
+        .final-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .final-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-container {
+            background: var(--card);
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1001;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--card);
+            z-index: 10;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .modal-title i {
+            color: var(--primary);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: none;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 16px;
+        }
+
+        .rules-section h4 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+
+        .rules-section h4:first-child {
+            margin-top: 0;
+        }
+
+        .rules-section h4 i {
+            color: var(--primary);
+        }
+
+        .rules-section p, .rules-list li, .tips-list li {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .rules-list {
+            padding-left: 18px;
+        }
+
+        .rules-list li {
+            margin-bottom: 6px;
+        }
+
+        .tips-list {
+            padding-left: 18px;
+            list-style: none;
+        }
+
+        .tips-list li {
+            position: relative;
+            margin-bottom: 6px;
+        }
+
+        .tips-list li:before {
+            content: '💡';
+            position: absolute;
+            left: -20px;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+
+        .close-rules-btn {
+            min-width: 180px;
+            padding: 12px 20px;
+        }
+
+        /* ===== LOADING ===== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            display: flex;
+            gap: 8px;
+        }
+
+        .spinner-circle {
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .spinner-circle:nth-child(2) { animation-delay: -0.16s; }
+        .spinner-circle:nth-child(3) { animation-delay: -0.32s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .loading-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 380px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .player-count {
+                font-size: 2.4rem;
+            }
+            .logo-text h1 {
+                font-size: 1.1rem;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== ANIMACIONES ===== */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- ===== PANTALLA INICIO ===== -->
+        <div id="start-screen" class="screen active">
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-container">
+                        <div class="logo-icon">📖</div>
+                        <div class="logo-text">
+                            <h1>JUEGO DEL <span>IMPOSTOR</span></h1>
+                            <p class="tagline">Personajes Bíblicos · ¿Quién finge?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <main class="main-content">
+                <div class="welcome-card">
+                    <div class="welcome-icon">📖</div>
+                    <p class="welcome-text">8 jugadores. Un impostor secreto. Un personaje bíblico oculto. ¡Descubre quién miente!</p>
+                </div>
+
+                <div class="setup-card">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i>
+                        <h2>Número de Jugadores</h2>
+                    </div>
+                    <div class="player-selector">
+                        <button class="selector-btn" id="decrease-players"><i class="fas fa-minus"></i></button>
+                        <div class="player-display">
+                            <div class="player-count" id="player-count">8</div>
+                            <div class="player-label">jugadores</div>
+                        </div>
+                        <button class="selector-btn" id="increase-players"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <input type="range" id="player-slider" min="3" max="8" value="8" class="player-slider">
+                    <div class="slider-labels">
+                        <span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span>
+                    </div>
+                </div>
+
+                <div class="setup-card">
+                    <div class="section-title">
+                        <i class="fas fa-list"></i>
+                        <h2>Elige una Categoría</h2>
+                    </div>
+                    <div class="categories-grid" id="categories-grid"></div>
+                    <div class="selected-category">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="selected-category-text">
+                            <span class="selected-label">Categoría seleccionada:</span>
+                            <span id="selected-category-name">Selecciona una categoría</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-section">
+                    <button id="rules-btn" class="btn-secondary"><i class="fas fa-book-open"></i> Ver Reglas</button>
+                    <button id="start-game" class="btn-primary"><i class="fas fa-play"></i> Iniciar Partida</button>
+                </div>
+            </main>
+            <footer style="padding:12px;text-align:center;font-size:0.65rem;color:var(--text-light);border-top:1px solid var(--border);background:var(--card);">
+                Diseñado para diversión entre amigos · Optimizado para móviles
+            </footer>
+        </div>
+
+        <!-- ===== PANTALLA RULETA (opcional) ===== -->
+        <div id="wheel-screen" class="screen">
+            <div class="header">
+                <div class="header-content">
+                    <div class="back-button" id="back-from-wheel"><i class="fas fa-arrow-left"></i></div>
+                    <div class="logo-text"><h2>Ruleta de Categorías</h2><p class="tagline">Gira y descubre</p></div>
+                    <div style="width:40px;"></div>
+                </div>
+            </div>
+            <main class="main-content" style="display:flex;flex-direction:column;align-items:center;">
+                <div class="wheel-container">
+                    <div class="wheel" id="category-wheel"></div>
+                    <div class="wheel-pointer"><div class="pointer-triangle"></div></div>
+                </div>
+                <button id="spin-wheel" class="spin-btn"><i class="fas fa-redo"></i> Girar Ruleta</button>
+                <div class="wheel-result" id="wheel-result">
+                    <div class="result-icon"><i class="fas fa-question-circle"></i></div>
+                    <p class="result-text">Presiona "Girar Ruleta"</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- ===== PANTALLA ROLES ===== -->
+        <div id="role-screen" class="screen">
+            <div class="header game-header">
+                <div class="header-content">
+                    <div class="back-button" id="back-to-menu"><i class="fas fa-home"></i></div>
+                    <div class="game-info">
+                        <h2 id="game-category">Categoría: <span>Cargando...</span></h2>
+                        <p class="game-subtitle">Pasa el dispositivo en privado</p>
+                    </div>
+                    <div class="progress-circle"><span id="progress-number">1</span></div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="progress-labels">
+                    <span id="current-player-count">Jugador 1</span>
+                    <span id="total-players-count">de 8</span>
+                </div>
+            </div>
+
+            <main class="main-content" style="display:flex;flex-direction:column;gap:14px;">
+                <div class="player-card">
+                    <div class="player-header">
+                        <div class="player-avatar" id="player-avatar" style="background:linear-gradient(135deg,#6b4e3a,#c9a84c);">
+                            <span id="player-number">1</span>
+                        </div>
+                        <div class="player-info">
+                            <h3 id="player-name">Jugador 1</h3>
+                            <div class="player-tag" id="player-tag">Jugador Normal</div>
+                        </div>
+                    </div>
+
+                    <div class="element-display">
+                        <div class="element-image-container" id="element-image-container">
+                            <div class="element-image" id="element-image">
+                                <i class="fas fa-question" id="default-icon"></i>
+                            </div>
+                        </div>
+                        <div class="element-details">
+                            <h4 id="element-name">Elemento Secreto</h4>
+                            <div class="category-display">
+                                <i class="fas fa-tag"></i>
+                                <span id="category-name">Categoría</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="role-section">
+                        <div class="role-display">
+                            <span class="role-label">Tu rol:</span>
+                            <span id="player-role" class="role-value">Jugador Normal</span>
+                        </div>
+                        <div id="impostor-warning" class="impostor-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <div>
+                                <h5>¡Eres el Impostor!</h5>
+                                <p>No conoces el personaje secreto. Intenta pasar desapercibido sin delatarte.</p>
+                            </div>
+                        </div>
+                        <div class="privacy-notice">
+                            <i class="fas fa-eye-slash"></i>
+                            <p>No dejes que los demás vean tu pantalla. Mantén tu rol en secreto.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="navigation-section">
+                    <div class="nav-buttons">
+                        <button id="prev-player" class="nav-btn prev-btn"><i class="fas fa-arrow-left"></i> Anterior</button>
+                        <button id="next-player" class="nav-btn next-btn">Siguiente <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                    <button id="finish-roles" class="finish-btn" disabled><i class="fas fa-check-circle"></i> Todos Listos</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- ===== PANTALLA INTERMEDIA ===== -->
+        <div id="intermediate-screen" class="screen">
+            <div class="header">
+                <div class="header-content">
+                    <div class="back-button" id="back-from-intermediate"><i class="fas fa-arrow-left"></i></div>
+                    <div class="logo-text"><h2>¿Serás el Impostor?</h2><p id="next-player-name" class="tagline">Preparando...</p></div>
+                    <div style="width:40px;"></div>
+                </div>
+            </div>
+            <main class="intermediate-content">
+                <div class="mystery-container">
+                    <div class="mystery-animation">
+                        <div class="mystery-circle">?</div>
+                    </div>
+                    <div class="mystery-message">
+                        <h3>El misterio te espera...</h3>
+                        <p class="mystery-text">¿Cuál será tu destino en esta partida?</p>
+                        <p class="mystery-subtext">Haz clic para revelar tu verdadero rol</p>
+                    </div>
+                    <button id="reveal-role" class="reveal-btn">
+                        <div class="reveal-icon"><i class="fas fa-eye"></i></div>
+                        <div class="reveal-text">
+                            <span class="reveal-title">Revelar Mi Rol</span>
+                            <span class="reveal-subtitle">Descubre la verdad</span>
+                        </div>
+                    </button>
+                    <div class="secret-notice">
+                        <i class="fas fa-user-secret"></i>
+                        <p>Mantén esta información en secreto. Los demás jugadores no deben ver tu pantalla.</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ===== PANTALLA INICIO JUEGO ===== -->
+        <div id="game-start-screen" class="screen">
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-text"><h2>¡Comienza el Juego!</h2><p class="tagline">Los roles han sido asignados</p></div>
+                </div>
+            </div>
+            <main class="game-start-content">
+                <div class="start-game-card">
+                    <div class="start-icon">
+                        <div class="icon-circle"><i class="fas fa-gamepad"></i></div>
+                    </div>
+                    <div class="start-message">
+                        <h3>¡Todo listo para jugar!</h3>
+                        <p class="start-text">Ahora que todos conocen sus roles, comienza la conversación y trata de descubrir quién es el impostor.</p>
+                    </div>
+                    <div class="game-instructions">
+                        <div class="instruction"><div class="instruction-icon"><i class="fas fa-comments"></i></div><p>Converse y haga preguntas relacionadas con el personaje secreto</p></div>
+                        <div class="instruction"><div class="instruction-icon"><i class="fas fa-theater-masks"></i></div><p>El impostor debe intentar pasar desapercibido sin conocer el personaje</p></div>
+                        <div class="instruction"><div class="instruction-icon"><i class="fas fa-vote-yea"></i></div><p>Al final, voten quién creen que es el impostor</p></div>
+                        <div class="instruction"><div class="instruction-icon"><i class="fas fa-trophy"></i></div><p>Revelen los roles para descubrir al ganador</p></div>
+                    </div>
+                    <div class="game-actions">
+                        <button id="end-game" class="btn-primary"><i class="fas fa-flag-checkered"></i> Fin del Juego</button>
+                        <button id="back-to-menu-from-game" class="btn-secondary"><i class="fas fa-home"></i> Volver al Menú</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ===== PANTALLA FINAL ===== -->
+        <div id="end-screen" class="screen">
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo-text"><h2>Resumen de la Partida</h2><p class="tagline">Descubre quién era el impostor</p></div>
+                </div>
+            </div>
+            <main class="end-content">
+                <div class="summary-card">
+                    <div class="summary-header">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>Resultados Finales</h3>
+                    </div>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <div class="item-icon"><i class="fas fa-users"></i></div>
+                            <div class="item-content">
+                                <span class="item-label">Jugadores</span>
+                                <span id="summary-players" class="item-value">8</span>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-icon"><i class="fas fa-tags"></i></div>
+                            <div class="item-content">
+                                <span class="item-label">Categoría</span>
+                                <span id="summary-category" class="item-value">Biblia</span>
+                            </div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="item-icon"><i class="fas fa-key"></i></div>
+                            <div class="item-content">
+                                <span class="item-label">Personaje Secreto</span>
+                                <span id="summary-secret" class="item-value">Moisés</span>
+                            </div>
+                        </div>
+                        <div class="summary-item impostor-reveal">
+                            <div class="item-icon"><i class="fas fa-user-secret"></i></div>
+                            <div class="item-content">
+                                <span class="item-label">El Impostor era...</span>
+                                <span id="summary-impostor" class="item-value impostor-name">Jugador 2</span>
+                            </div>
+                            <div class="impostor-badge">¡Sorpresa!</div>
+                        </div>
+                    </div>
+                    <div class="final-message">
+                        <p class="final-text">¡Esperamos que hayas disfrutado del juego! ¿Lograste descubrir al impostor?</p>
+                    </div>
+                    <div class="final-actions">
+                        <button id="play-again" class="btn-primary"><i class="fas fa-redo"></i> Jugar Otra Vez</button>
+                        <button id="new-game-from-end" class="btn-secondary"><i class="fas fa-home"></i> Nueva Partida</button>
+                    </div>
+                </div>
+            </main>
+            <footer style="padding:12px;text-align:center;font-size:0.65rem;color:var(--text-light);border-top:1px solid var(--border);background:var(--card);">
+                ¡Gracias por jugar! Comparte con tus amigos
+            </footer>
+        </div>
+
+        <!-- ===== MODAL REGLAS ===== -->
+        <div id="rules-modal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <div class="modal-title"><i class="fas fa-book"></i> Reglas del Juego</div>
+                    <button class="modal-close" id="close-rules"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="rules-section">
+                        <h4><i class="fas fa-info-circle"></i> Objetivo</h4>
+                        <p>Descubrir quién es el impostor. El impostor no conoce el personaje secreto y debe intentar pasar desapercibido.</p>
+                    </div>
+                    <div class="rules-section">
+                        <h4><i class="fas fa-users"></i> Preparación</h4>
+                        <ol class="rules-list">
+                            <li>Selecciona el número de jugadores (3-8)</li>
+                            <li>Elige una categoría (Biblia)</li>
+                            <li>El sistema asigna aleatoriamente un impostor</li>
+                            <li>Se selecciona un personaje secreto de la categoría</li>
+                        </ol>
+                    </div>
+                    <div class="rules-section">
+                        <h4><i class="fas fa-gamepad"></i> Desarrollo</h4>
+                        <ol class="rules-list">
+                            <li>Cada jugador ve en privado si es impostor o no</li>
+                            <li>Los jugadores normales ven el personaje secreto</li>
+                            <li>El impostor solo sabe que es el impostor</li>
+                            <li>Los jugadores conversan y hacen preguntas sobre el personaje</li>
+                            <li>El impostor debe intentar no delatarse</li>
+                        </ol>
+                    </div>
+                    <div class="rules-section">
+                        <h4><i class="fas fa-flag-checkered"></i> Final</h4>
+                        <ol class="rules-list">
+                            <li>Después del debate, los jugadores votan quién creen que es el impostor</li>
+                            <li>Se revelan los roles reales</li>
+                            <li>Si descubren al impostor, ganan los jugadores normales</li>
+                            <li>Si el impostor logra engañarlos, gana el impostor</li>
+                        </ol>
+                    </div>
+                    <div class="rules-section">
+                        <h4><i class="fas fa-lightbulb"></i> Consejos</h4>
+                        <ul class="tips-list">
+                            <li>Haz preguntas específicas sobre el personaje secreto</li>
+                            <li>Observa las reacciones de los demás jugadores</li>
+                            <li>El impostor debe prestar atención a las pistas</li>
+                            <li>Mantén la calma y no te delates muy rápido</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-primary close-rules-btn" id="close-rules-btn"><i class="fas fa-check"></i> Entendido</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LOADING ===== -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-spinner">
+                <div class="spinner-circle"></div>
+                <div class="spinner-circle"></div>
+                <div class="spinner-circle"></div>
+            </div>
+            <p class="loading-text">Cargando personajes bíblicos...</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATOS: PERSONAJES BÍBLICOS
+        // ============================================================
+        const gameData = {
+            "biblia": {
+                name: "Personajes Bíblicos",
+                logo: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📖%3C/text%3E%3C/svg%3E",
+                items: [
+                    { name: "Jesús de Nazaret", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📖%3C/text%3E%3C/svg%3E" },
+                    { name: "Moisés", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📜%3C/text%3E%3C/svg%3E" },
+                    { name: "Abraham", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⭐%3C/text%3E%3C/svg%3E" },
+                    { name: "Rey David", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E👑%3C/text%3E%3C/svg%3E" },
+                    { name: "María", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌹%3C/text%3E%3C/svg%3E" },
+                    { name: "Pablo de Tarso", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📖%3C/text%3E%3C/svg%3E" },
+                    { name: "Pedro (Simón Pedro)", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛪%3C/text%3E%3C/svg%3E" },
+                    { name: "Salomón", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⚖️%3C/text%3E%3C/svg%3E" },
+                    { name: "Adán", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌍%3C/text%3E%3C/svg%3E" },
+                    { name: "Eva", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🍎%3C/text%3E%3C/svg%3E" },
+                    { name: "Noé", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚢%3C/text%3E%3C/svg%3E" },
+                    { name: "Juan el Bautista", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💧%3C/text%3E%3C/svg%3E" },
+                    { name: "José (el soñador)", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌈%3C/text%3E%3C/svg%3E" },
+                    { name: "José de Nazaret", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔨%3C/text%3E%3C/svg%3E" },
+                    { name: "Judas Iscariote", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💰%3C/text%3E%3C/svg%3E" },
+                    { name: "Jacob (Israel)", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🪜%3C/text%3E%3C/svg%3E" },
+                    { name: "Isaac", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔥%3C/text%3E%3C/svg%3E" },
+                    { name: "Sansón", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💪%3C/text%3E%3C/svg%3E" },
+                    { name: "Daniel", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🦁%3C/text%3E%3C/svg%3E" },
+                    { name: "María Magdalena", image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🕊️%3C/text%3E%3C/svg%3E" }
+                ]
+            }
+        };
+
+        // ============================================================
+        //  VARIABLES GLOBALES
+        // ============================================================
+        let currentPlayers = 8;
+        let currentCategory = "biblia";
+        let currentCategoryName = "Personajes Bíblicos";
+        let secretElement = "";
+        let secretElementImage = "";
+        let impostorIndex = -1;
+        let currentPlayerIndex = 0;
+        let playersData = [];
+        let playersWhoSawRole = new Set();
+        let isWheelSpinning = false;
+        let imageCache = new Map();
+
+        // ============================================================
+        //  REFERENCIAS DOM
+        // ============================================================
+        const startScreen = document.getElementById('start-screen');
+        const wheelScreen = document.getElementById('wheel-screen');
+        const roleScreen = document.getElementById('role-screen');
+        const intermediateScreen = document.getElementById('intermediate-screen');
+        const gameStartScreen = document.getElementById('game-start-screen');
+        const endScreen = document.getElementById('end-screen');
+        const rulesModal = document.getElementById('rules-modal');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        const playerCountElement = document.getElementById('player-count');
+        const decreasePlayersBtn = document.getElementById('decrease-players');
+        const increasePlayersBtn = document.getElementById('increase-players');
+        const playerSlider = document.getElementById('player-slider');
+        const categoriesGrid = document.getElementById('categories-grid');
+        const selectedCategoryNameElement = document.getElementById('selected-category-name');
+        const startGameBtn = document.getElementById('start-game');
+        const rulesBtn = document.getElementById('rules-btn');
+        const randomCategoryBtn = document.getElementById('random-category');
+        const closeRulesBtn = document.getElementById('close-rules-btn');
+        const closeRulesXBtn = document.getElementById('close-rules');
+
+        const categoryWheel = document.getElementById('category-wheel');
+        const spinWheelBtn = document.getElementById('spin-wheel');
+        const backFromWheelBtn = document.getElementById('back-from-wheel');
+        const wheelResult = document.getElementById('wheel-result');
+
+        const gameCategoryElement = document.getElementById('game-category');
+        const playerNameElement = document.getElementById('player-name');
+        const playerNumberElement = document.getElementById('player-number');
+        const playerAvatar = document.getElementById('player-avatar');
+        const playerStatus = document.getElementById('player-status');
+        const playerTag = document.getElementById('player-tag');
+        const elementImage = document.getElementById('element-image');
+        const defaultIcon = document.getElementById('default-icon');
+        const elementNameElement = document.getElementById('element-name');
+        const categoryNameElement = document.getElementById('category-name');
+        const playerRoleElement = document.getElementById('player-role');
+        const impostorWarning = document.getElementById('impostor-warning');
+        const prevPlayerBtn = document.getElementById('prev-player');
+        const nextPlayerBtn = document.getElementById('next-player');
+        const finishRolesBtn = document.getElementById('finish-roles');
+        const backToMenuBtn = document.getElementById('back-to-menu');
+        const progressFill = document.getElementById('progress-fill');
+        const progressNumber = document.getElementById('progress-number');
+        const currentPlayerCount = document.getElementById('current-player-count');
+        const totalPlayersCount = document.getElementById('total-players-count');
+
+        const nextPlayerNameElement = document.getElementById('next-player-name');
+        const revealRoleBtn = document.getElementById('reveal-role');
+        const backFromIntermediateBtn = document.getElementById('back-from-intermediate');
+
+        const endGameBtn = document.getElementById('end-game');
+        const backToMenuFromGameBtn = document.getElementById('back-to-menu-from-game');
+
+        const summaryPlayersElement = document.getElementById('summary-players');
+        const summaryCategoryElement = document.getElementById('summary-category');
+        const summarySecretElement = document.getElementById('summary-secret');
+        const summaryImpostorElement = document.getElementById('summary-impostor');
+        const playAgainBtn = document.getElementById('play-again');
+        const newGameFromEndBtn = document.getElementById('new-game-from-end');
+
+        // ============================================================
+        //  INICIALIZACIÓN
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initGame();
+        });
+
+        function initGame() {
+            // Cargar imágenes (simulado)
+            loadingOverlay.style.display = 'flex';
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 600);
+
+            // Eventos de jugadores
+            decreasePlayersBtn.addEventListener('click', () => updatePlayerCount(-1));
+            increasePlayersBtn.addEventListener('click', () => updatePlayerCount(1));
+            playerSlider.addEventListener('input', (e) => {
+                currentPlayers = parseInt(e.target.value);
+                updatePlayerCountDisplay();
+            });
+
+            // Eventos principales
+            startGameBtn.addEventListener('click', startGame);
+            rulesBtn.addEventListener('click', showRules);
+            closeRulesBtn.addEventListener('click', hideRules);
+            closeRulesXBtn.addEventListener('click', hideRules);
+
+            // Ruleta
+            if (spinWheelBtn) spinWheelBtn.addEventListener('click', spinWheel);
+            if (backFromWheelBtn) backFromWheelBtn.addEventListener('click', () => {
+                wheelScreen.classList.remove('active');
+                startScreen.classList.add('active');
+            });
+
+            // Roles
+            prevPlayerBtn.addEventListener('click', showPreviousPlayer);
+            nextPlayerBtn.addEventListener('click', showNextPlayer);
+            finishRolesBtn.addEventListener('click', finishRoleAssignment);
+            backToMenuBtn.addEventListener('click', goBackToMenu);
+
+            // Intermedia
+            revealRoleBtn.addEventListener('click', revealPlayerRole);
+            backFromIntermediateBtn.addEventListener('click', () => {
+                intermediateScreen.classList.remove('active');
+                roleScreen.classList.add('active');
+            });
+
+            // Inicio juego
+            endGameBtn.addEventListener('click', showEndScreen);
+            backToMenuFromGameBtn.addEventListener('click', goBackToMenu);
+
+            // Final
+            playAgainBtn.addEventListener('click', playAgain);
+            newGameFromEndBtn.addEventListener('click', newGame);
+
+            // Cerrar modal
+            rulesModal.addEventListener('click', function(e) {
+                if (e.target === rulesModal || e.target.classList.contains('modal-overlay')) {
+                    hideRules();
+                }
+            });
+
+            // Renderizar categorías
+            renderCategories();
+
+            // Seleccionar categoría por defecto
+            setTimeout(() => {
+                selectCategory('biblia');
+            }, 100);
+        }
+
+        // ============================================================
+        //  FUNCIONES DE JUGADORES
+        // ============================================================
+        function updatePlayerCount(change) {
+            currentPlayers += change;
+            if (currentPlayers < 3) currentPlayers = 3;
+            if (currentPlayers > 8) currentPlayers = 8;
+            updatePlayerCountDisplay();
+        }
+
+        function updatePlayerCountDisplay() {
+            playerCountElement.textContent = currentPlayers;
+            playerSlider.value = currentPlayers;
+        }
+
+        // ============================================================
+        //  CATEGORÍAS
+        // ============================================================
+        function renderCategories() {
+            categoriesGrid.innerHTML = '';
+            Object.keys(gameData).forEach(categoryId => {
+                const category = gameData[categoryId];
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.dataset.category = categoryId;
+                card.innerHTML = `
+                    <img src="${category.logo}" alt="${category.name}" class="category-logo">
+                    <div class="category-name">${category.name}</div>
+                `;
+                card.addEventListener('click', () => selectCategory(categoryId));
+                categoriesGrid.appendChild(card);
+            });
+        }
+
+        function selectCategory(categoryId) {
+            document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+            const selected = document.querySelector(`[data-category="${categoryId}"]`);
+            if (selected) selected.classList.add('selected');
+
+            currentCategory = categoryId;
+            currentCategoryName = gameData[categoryId].name;
+            selectedCategoryNameElement.textContent = currentCategoryName;
+        }
+
+        // ============================================================
+        //  RULETA
+        // ============================================================
+        function showWheelScreen() {
+            startScreen.classList.remove('active');
+            wheelScreen.classList.add('active');
+            createWheel();
+        }
+
+        function createWheel() {
+            categoryWheel.innerHTML = '';
+            const categories = Object.keys(gameData);
+            const segmentAngle = 360 / categories.length;
+            const colors = ['#6b4e3a', '#8b6f5a', '#c9a84c', '#4e3a2b', '#a0522d', '#d2b48c'];
+
+            categories.forEach((catId, index) => {
+                const cat = gameData[catId];
+                const seg = document.createElement('div');
+                seg.className = 'wheel-segment';
+                seg.style.transform = `rotate(${index * segmentAngle}deg)`;
+                seg.style.backgroundColor = colors[index % colors.length];
+                const content = document.createElement('div');
+                content.className = 'wheel-content';
+                content.style.transform = `rotate(${segmentAngle / 2}deg)`;
+                content.innerHTML = `<img src="${cat.logo}" alt="${cat.name}"><span>${cat.name}</span>`;
+                seg.appendChild(content);
+                categoryWheel.appendChild(seg);
+            });
+        }
+
+        function spinWheel() {
+            if (isWheelSpinning) return;
+            isWheelSpinning = true;
+            spinWheelBtn.disabled = true;
+            spinWheelBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Girando...';
+
+            const categories = Object.keys(gameData);
+            const segmentAngle = 360 / categories.length;
+            const randomSpin = 1440 + (Math.random() * 360) + (Math.random() * 360);
+            categoryWheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.17, 0.99)';
+            categoryWheel.style.transform = `rotate(${randomSpin}deg)`;
+
+            setTimeout(() => {
+                const normalizedAngle = randomSpin % 360;
+                const adjustedAngle = (normalizedAngle + 90) % 360;
+                const winningSegment = Math.floor((360 - adjustedAngle) / segmentAngle) % categories.length;
+                const winningId = categories[winningSegment];
+                const winningCat = gameData[winningId];
+
+                wheelResult.innerHTML = `
+                    <div class="result-icon"><i class="fas fa-trophy"></i></div>
+                    <p class="result-text">¡Categoría seleccionada!</p>
+                    <h3 class="result-category">${winningCat.name}</h3>
+                    <img src="${winningCat.logo}" alt="${winningCat.name}" style="width:48px;height:48px;object-fit:contain;margin:6px auto;">
+                    <p class="result-subtext" style="font-size:0.75rem;color:var(--text-light);">Seleccionada por la ruleta</p>
+                `;
+
+                setTimeout(() => {
+                    selectCategory(winningId);
+                    setTimeout(() => {
+                        wheelScreen.classList.remove('active');
+                        startScreen.classList.add('active');
+                        setTimeout(() => {
+                            categoryWheel.style.transition = 'none';
+                            categoryWheel.style.transform = 'rotate(0deg)';
+                            isWheelSpinning = false;
+                            spinWheelBtn.disabled = false;
+                            spinWheelBtn.innerHTML = '<i class="fas fa-redo"></i> Girar Ruleta';
+                            wheelResult.innerHTML = `
+                                <div class="result-icon"><i class="fas fa-question-circle"></i></div>
+                                <p class="result-text">Presiona "Girar Ruleta" para comenzar</p>
+                            `;
+                        }, 300);
+                    }, 1800);
+                }, 800);
+            }, 4000);
+        }
+
+        // ============================================================
+        //  MODAL REGLAS
+        // ============================================================
+        function showRules() { rulesModal.classList.add('active'); }
+        function hideRules() { rulesModal.classList.remove('active'); }
+
+        // ============================================================
+        //  INICIAR JUEGO
+        // ============================================================
+        function startGame() {
+            if (!currentCategory) {
+                alert('Por favor selecciona una categoría');
+                return;
+            }
+
+            const items = gameData[currentCategory].items;
+            const shuffled = [...items].sort(() => Math.random() - 0.5);
+            const chosen = shuffled[Math.floor(Math.random() * shuffled.length)];
+            secretElement = chosen.name;
+            secretElementImage = chosen.image;
+
+            impostorIndex = Math.floor(Math.random() * currentPlayers);
+
+            playersData = [];
+            playersWhoSawRole.clear();
+
+            for (let i = 0; i < currentPlayers; i++) {
+                playersData.push({
+                    id: i + 1,
+                    name: `Jugador ${i + 1}`,
+                    isImpostor: i === impostorIndex,
+                    color: getPlayerColor(i),
+                    hasSeenRole: false
+                });
+            }
+
+            gameCategoryElement.innerHTML = `Categoría: <span>${currentCategoryName}</span>`;
+            categoryNameElement.textContent = currentCategoryName;
+
+            startScreen.classList.remove('active');
+            roleScreen.classList.add('active');
+
+            currentPlayerIndex = 0;
+            updateFinishButton();
+            showPlayerInfo();
+        }
+
+        // ============================================================
+        //  MOSTRAR INFO JUGADOR
+        // ============================================================
+        function showPlayerInfo() {
+            const player = playersData[currentPlayerIndex];
+
+            playerNameElement.textContent = player.name;
+            playerNumberElement.textContent = player.id;
+            playerAvatar.style.background = player.color;
+            playerTag.textContent = player.isImpostor ? 'Impostor' : 'Jugador Normal';
+
+            if (player.isImpostor) {
+                elementNameElement.textContent = '???';
+                elementNameElement.style.color = 'var(--danger)';
+                defaultIcon.style.display = 'block';
+                elementImage.style.background = 'linear-gradient(135deg, #b22222, #8b0000)';
+                elementImage.style.backgroundSize = '400% 400%';
+                elementImage.style.animation = 'gradientShift 3s ease infinite';
+                const existingImg = elementImage.querySelector('img');
+                if (existingImg) existingImg.style.display = 'none';
+            } else {
+                elementNameElement.textContent = secretElement;
+                elementNameElement.style.color = 'var(--text)';
+                defaultIcon.style.display = 'none';
+                elementImage.style.background = 'none';
+                elementImage.style.animation = 'none';
+                let img = elementImage.querySelector('img');
+                if (!img) {
+                    img = document.createElement('img');
+                    elementImage.appendChild(img);
+                }
+                img.src = secretElementImage;
+                img.alt = secretElement;
+                img.style.display = 'block';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = 'var(--radius-sm)';
+            }
+
+            if (player.isImpostor) {
+                playerRoleElement.textContent = 'Impostor';
+                playerRoleElement.style.color = 'var(--danger)';
+                impostorWarning.style.display = 'flex';
+            } else {
+                playerRoleElement.textContent = 'Jugador Normal';
+                playerRoleElement.style.color = 'var(--primary)';
+                impostorWarning.style.display = 'none';
+            }
+
+            const progress = ((currentPlayerIndex + 1) / currentPlayers) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressNumber.textContent = currentPlayerIndex + 1;
+            currentPlayerCount.textContent = player.name;
+            totalPlayersCount.textContent = `de ${currentPlayers}`;
+
+            prevPlayerBtn.disabled = currentPlayerIndex === 0;
+            nextPlayerBtn.disabled = currentPlayerIndex === currentPlayers - 1;
+
+            updateFinishButton();
+        }
+
+        // ============================================================
+        //  NAVEGACIÓN JUGADORES
+        // ============================================================
+        function showNextPlayer() {
+            if (currentPlayerIndex < currentPlayers - 1) {
+                playersData[currentPlayerIndex].hasSeenRole = true;
+                playersWhoSawRole.add(currentPlayerIndex);
+                showIntermediateScreen();
+            }
+        }
+
+        function showIntermediateScreen() {
+            const nextPlayer = playersData[currentPlayerIndex + 1];
+            nextPlayerNameElement.textContent = `Ahora es el turno de ${nextPlayer.name}`;
+            roleScreen.classList.remove('active');
+            intermediateScreen.classList.add('active');
+        }
+
+        function revealPlayerRole() {
+            currentPlayerIndex++;
+            intermediateScreen.classList.remove('active');
+            roleScreen.classList.add('active');
+            showPlayerInfo();
+        }
+
+        function showPreviousPlayer() {
+            if (currentPlayerIndex > 0) {
+                if (intermediateScreen.classList.contains('active')) {
+                    intermediateScreen.classList.remove('active');
+                    roleScreen.classList.add('active');
+                } else {
+                    currentPlayerIndex--;
+                    showPlayerInfo();
+                }
+            }
+        }
+
+        // ============================================================
+        //  BOTÓN "TODOS LISTOS"
+        // ============================================================
+        function updateFinishButton() {
+            const allSeen = playersData.every((p, i) => {
+                if (i === currentPlayerIndex) return true;
+                return p.hasSeenRole;
+            });
+
+            finishRolesBtn.disabled = !allSeen;
+
+            if (allSeen) {
+                finishRolesBtn.innerHTML = '<i class="fas fa-check-circle"></i> Todos Listos';
+            } else {
+                const unseen = playersData.filter(p => !p.hasSeenRole).length;
+                finishRolesBtn.innerHTML = `<i class="fas fa-clock"></i> Esperando (${unseen})`;
+            }
+        }
+
+        function finishRoleAssignment() {
+            playersData[currentPlayerIndex].hasSeenRole = true;
+            playersWhoSawRole.add(currentPlayerIndex);
+            roleScreen.classList.remove('active');
+            gameStartScreen.classList.add('active');
+        }
+
+        // ============================================================
+        //  PANTALLA FINAL
+        // ============================================================
+        function showEndScreen() {
+            summaryPlayersElement.textContent = currentPlayers;
+            summaryCategoryElement.textContent = currentCategoryName;
+            summarySecretElement.textContent = secretElement;
+            summaryImpostorElement.textContent = `Jugador ${impostorIndex + 1}`;
+
+            gameStartScreen.classList.remove('active');
+            endScreen.classList.add('active');
+        }
+
+        // ============================================================
+        //  NAVEGACIÓN PRINCIPAL
+        // ============================================================
+        function goBackToMenu() {
+            roleScreen.classList.remove('active');
+            intermediateScreen.classList.remove('active');
+            gameStartScreen.classList.remove('active');
+            endScreen.classList.remove('active');
+            startScreen.classList.add('active');
+            currentPlayerIndex = 0;
+            playersWhoSawRole.clear();
+            updateFinishButton();
+        }
+
+        function playAgain() {
+            endScreen.classList.remove('active');
+            intermediateScreen.classList.remove('active');
+            startGame();
+        }
+
+        function newGame() {
+            goBackToMenu();
+        }
+
+        // ============================================================
+        //  UTILIDADES
+        // ============================================================
+        function getPlayerColor(index) {
+            const colors = [
+                'linear-gradient(135deg, #6b4e3a, #c9a84c)',
+                'linear-gradient(135deg, #8b6f5a, #d2b48c)',
+                'linear-gradient(135deg, #4e3a2b, #a0522d)',
+                'linear-gradient(135deg, #a0522d, #6b4e3a)',
+                'linear-gradient(135deg, #c9a84c, #8b6f5a)',
+                'linear-gradient(135deg, #5d4037, #b8860b)',
+                'linear-gradient(135deg, #795548, #ffb300)',
+                'linear-gradient(135deg, #4e342e, #d4a373)'
+            ];
+            return colors[index % colors.length];
+        }
+
+        // Añadir animación de gradiente
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes gradientShift {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
